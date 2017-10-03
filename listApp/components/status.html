@@ -1,0 +1,22 @@
+<section class="status">
+    <div class="inside">
+        <hr style="margin:1.5% 0">
+        <h3 class="name">
+            {{$ctrl.player.name}}
+            <span style="display:inline-block;right:1.5%;position:absolute">Lv.{{$ctrl.player.lvl.lvl}}</span>
+        </h3>
+        <span>HP {{$ctrl.player.hp}} / {{$ctrl.player.mhp}}</span>
+        <span class="circle {{$ctrl.player.element}}"> INNATE </span>
+        <ul class="attr">
+            <li ng-repeat="(attr, value) in $ctrl.player.stats">
+                {{attr}}. <span>{{value}}</span>
+            </li>
+        </ul>
+        <div class="xp">
+            <ul>
+                <li>xp: {{$ctrl.player.lvl.xp}}</li>
+                <li>next: {{$ctrl.player.lvl.next}}</li> 
+            </ul>
+        </div>
+    </div>
+</section>

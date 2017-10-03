@@ -1,0 +1,21 @@
+<div class="charBattle {{$ctrl.player.sta == 100 ? 'ready' : '' }}">
+    <picture id="char-img" style=" background-image: url(assets/img/{{$ctrl.player.img}});" alt="character image" class="shadowfilter {{$ctrl.player.element}} {{$ctrl.player.status == false ? '' : $ctrl.player.status}}">        
+    </picture>
+    <!-- Bars -->
+    <div class="bars">
+        <div class="mhp bar">
+            <div class="hp" style="width: {{ (($ctrl.player.hp /$ctrl.player.mhp ) * 100 )}}% "></div>
+            <div class="info">
+                <h3>HP</h3>
+                <span>{{$ctrl.player.hp}} / {{$ctrl.player.mhp}}</span>
+            </div>
+        </div>
+        <div class="msta bar">
+            <div class="sta" style="width: {{$ctrl.player.sta}}% "></div>
+            <div class="info">
+                <h3>Sta</h3>
+                <span>{{$ctrl.player.sta}}%</span>
+            </div>
+        </div>
+    </div>
+</div>

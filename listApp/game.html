@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Language" content="pt-br">
+    <script src="script/angular.min.js"></script>
+    <script src="lib/game.js"></script>
+    <script src="lib/statusComp.js"></script>
+    <link rel="stylesheet" href="style/game.css">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body ng-app="game" ng-controller="gameCtrl" ng-init="setPlayer( player.team[0] )">
+    <header>
+        <h1>Characters</h1>
+        <status ng-repeat="char in player.team" ng-click="setPlayer( char )" player="char" ></status>
+    </header>
+    <main>
+        <aside>
+            <section id="profile">
+                <div class="inside">
+                    <h3>Profile</h3>
+                    <hr style="margin: 1% 0 3% 0">
+                    <ul>
+                        <li>{{player.char.ds}}</li>
+                        <li ng-repeat="(attr, value) in player.char.profile">
+                            {{attr}}: {{value}}
+                        </li>
+                        <li>{{player.char.hand == "r" ? "Right-handed" : "Left-handed"}}</li>
+                    </ul>
+                </div>
+            </section>
+            <section id="bottom">
+                <ul>
+                    <li>{{player.gold | currency}} G</li>
+                </ul>
+            </section>
+        </aside>
+        <aside>
+            <picture id="char-img" style=" background-image: url(assets/img/{{player.char.img}});" alt="character image">
+            </picture>
+        </aside>
+    </main>
+    
+</body>

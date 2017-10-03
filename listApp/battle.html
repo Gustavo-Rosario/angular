@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Language" content="pt-br">
+    <script src="script/angular.min.js"></script>
+    <script src="lib/game.js"></script>
+    <script src="lib/battleComponents.js"></script>
+    <link rel="stylesheet" href="style/game.css">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body ng-app="game" ng-controller="gameCtrl" ng-init="player.charge()">
+    <header>
+        <h1>Battle</h1>
+        <section id="battleLog" ng-hide="battle.log == false">{{battle.log}}</section>
+    </header>
+    <main id="battlefield">
+        <enemy-battle ng-repeat="enemy in battle.enemies" enemy="enemy" turn="battle.turn" ng-click=" battle.turn == 'attack' ? attack(player.char, enemy) : ''"></enemy-battle>
+    </main>
+    <footer>
+        <battle-menu player="player.char" attack="showEnemies()" items="openBag()" ng-hide="battle.menu == false" ></battle-menu>
+        <bag items="player.char.bag" ng-hide="battle.bag == false" ></bag>
+        <char ng-repeat="partner in player.team" ng-click=" partner.sta == 100 ? showMenu(partner) : '' " player="partner">
+        </char>
+    </footer>
+</body>

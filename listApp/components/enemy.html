@@ -1,0 +1,7 @@
+<div class="enemyBattle {{$ctrl.turn == 'attack' && $ctrl.enemy.isAlive() ? 'attackEnemy' : ''}} {{$ctrl.enemy.isAlive() ? '' : 'dead' }}">
+    <picture class="{{$ctrl.enemy.isAlive() ? 'alive' : '' }}" style="background-image: url(assets/img/{{$ctrl.enemy.img}});" title="{{$ctrl.enemy.name}}">
+    </picture>
+    <section>
+        <div class="bar"><div class="hp" style="width: {{ (($ctrl.enemy.hp /$ctrl.enemy.mhp ) * 100 )}}% "></div></div>
+    </section>
+</div>

@@ -1,0 +1,207 @@
+<?php
+/*-----------------------------------------------------------------------------------*/
+/*	Enqueue Styles in Child Theme
+/*-----------------------------------------------------------------------------------*/
+if (!function_exists('inspiry_enqueue_child_styles')) {
+    function inspiry_enqueue_child_styles(){
+        if ( !is_admin() ) {
+            // dequeue and deregister parent default css
+            wp_dequeue_style( 'parent-default' );
+            wp_deregister_style( 'parent-default' );
+
+            // dequeue parent custom css
+            wp_dequeue_style( 'parent-custom' );
+
+            // parent default css
+            wp_enqueue_style( 'parent-default', get_template_directory_uri().'/style.css' );
+
+            // parent custom css
+            wp_enqueue_style( 'parent-custom' );
+
+            // child default css
+            wp_enqueue_style('child-default', get_stylesheet_uri(), array('parent-default'), '1.0', 'all' );
+
+            // child custom css
+            wp_enqueue_style('child-custom',  get_stylesheet_directory_uri() . '/child-custom.css', array('child-default'), '1.0', 'all' );
+        }
+    }
+}
+add_action( 'wp_enqueue_scripts', 'inspiry_enqueue_child_styles', PHP_INT_MAX );
+
+
+if ( !function_exists( 'inspiry_load_translation_from_child' ) ) {
+    /**
+     * Load translation files from child theme
+     */
+    function inspiry_load_translation_from_child() {
+        load_child_theme_textdomain ( 'framework', get_stylesheet_directory () . '/languages' );
+    }
+    add_action ( 'after_setup_theme', 'inspiry_load_translation_from_child' );
+}
+
+
+
+/* ----------------------------------------------------------------------------- */
+/*				Custom EditInline 				 */
+/*-------------------------------------------------------------------------------*/
+// Add to our admin_init function
+add_filter('manage_post_posts_columns', 'shiba_add_post_columns');
+ 
+function shiba_add_post_columns($columns) {
+    $columns['price'] = 'Preco';
+    $columns['size'] = 'Area'
+    return $columns;
+}
+
+// Add to our admin_init function
+add_action('manage_posts_custom_column', 'shiba_render_post_columns', 10, 2);
+ 
+function shiba_render_post_columns($column_name, $id) {
+    global $post;
+    switch ($column_name) {
+    case 'price':
+        // show price
+        $price = get_post_meta( $post->ID, 'REAL_HOMES_property_price', TRUE);
+        echo $price;          
+        break;
+    case 'size':
+        //show size
+        $size = get_post_meta($post->ID, REAL_HOMES_property_size', TRUE);
+	echo $size;
+	break;
+    }
+}
+
+ 
+ 
+add_action( 'quick_edit_custom_box', 'add_to_bulk_quick_edit_custom_box', 10, 2 );
+ 
+function add_to_bulk_quick_edit_custom_box( $column_name, $post_type ) {
+    switch ( $post_type ) {
+        case 'property':
+            switch( $column_name ) {
+                case 'price': 
+                    global $post;
+                    ?> <fieldset class="inline-edit-col-right">
+                    <div class="inline-edit-group">
+                    <label>
+                    <span class="title">Preço a partir de</span>
+                    <input type="text" name="REAL_HOMES_property_price" id="REAL_HOMES_property_price" value=""/>
+                    </label>
+                    </div>
+                    </fieldset><?php
+                break;
+
+		case 'size': 
+                    global $post;
+                    ?> <fieldset class="inline-edit-col-right">
+                    <div class="inline-edit-group">
+                    <label>
+                    <span class="title">Tamanho da área (Só dígitos)</span>
+                    <input type="number" name="REAL_HOMES_property_size" id="REAL_HOMES_property_size" value=""/>
+                    </label>
+                    </div>
+                    </fieldset><?php
+                break;
+            }
+        break;
+    }
+}
+
+add_action('admin_footer', 'myown_quick_edit_javascript');
+function myown_quick_edit_javascript(){
+    global $current_screen,$post;
+    if (($current_screen->post_type != 'property')) return;
+    ?>
+    <script type="text/javascript">
+        function set_custom_value(fieldValue, nonce){ 
+            // refresh the quick menu properly
+            inlineEditPost.revert();
+            jQuery('input#REAL_HOMES_property_price').val(fieldValue);
+            console.log("valor:" +fieldValue);
+        }
+
+	jQuery(function(){
+		jQuery(".editinline").click(function(){
+			let price = parseInt(jQuery(this).closest("tr").find(".price").html().split("$")[1].replace('.', '').replace('.', ''));
+			//console.log(price);
+			jQuery('input#REAL_HOMES_property_price').val(price);
+		});
+	});
+   
+        jQuery(document).ready(function(){
+                jQuery('a.editinline').click (function (){
+         
+        // edit by ajax
+        var val = "<?= get_post_meta( $post->ID, 'REAL_HOMES_property_price', TRUE);?>";
+        var data = {
+                    action: 'ajaxDataSubmit',
+                    id: val
+                };
+        ajax_params = "<?php echo admin_url('admin-ajax.php');?>";
+        jQuery.ajax({
+            type:"POST",
+            url: ajax_params, // our PHP handler file
+            data: data,
+            //loadin image or text beforeload ajax code },
+            success:function(results){
+                
+                // do something with returned data
+            return results;
+        }
+    });
+  });
+});
+</script>
+<?php
+}
+
+
+function ajaxDataSubmit(){
+    global $wpdb;
+    $id = $_POST['id'];
+    echo $id;
+    die;
+}
+
+add_action('wp_ajax_ajaxDataSubmit', 'ajaxDataSubmit');//Logged in users
+add_action('wp_ajax_nopriv_ajaxDataSubmit', 'ajaxDataSubmit'); // For not logged in users
+add_filter('post_row_actions', 'myown_expand_quick_edit_link', 10, 2);
+ 
+function myown_expand_quick_edit_link($actions, $post) {
+    global $current_screen;
+    if (($current_screen->post_type != 'property')){
+        return $actions;
+    }
+    $nonce = wp_create_nonce( 'REAL_HOMES_property_price'.$post->ID);
+    $myfielvalue = get_post_meta( $post->ID, 'REAL_HOMES_property_price', TRUE);
+    $actions['inline hide-if-no-js'] = '<a href="#" class="editinline" title="';
+    $actions['inline hide-if-no-js'] .= esc_attr( __( 'Edit this item inline' ) ) . '"';
+    $actions['inline hide-if-no-js'] .= " onclick='set_custom_value(".$myfielvalue.")' >";
+    $actions['inline hide-if-no-js'] .= __( 'Quick Edit' );
+    $actions['inline hide-if-no-js'] .= '</a>';
+    return $actions;
+}
+
+
+add_action('save_post', 'myown_save_quick_edit_data');
+function myown_save_quick_edit_data($post_id) { // print_r($_REQUEST);
+    // verify if this is an auto save routine.
+    if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ){
+        return $post_id;
+    }
+    // Authentication passed now we save the data
+    if ('property' == $_POST['post_type']) {
+        $my_fieldvalue[] = esc_attr($_REQUEST['REAL_HOMES_property_price']);
+	$my_fieldvalue[] = esc_attr($_REQUEST['REAL_HOMES_property_size']);
+        if (isset($_REQUEST['REAL_HOMES_property_price']) && $my_fieldvalue[0] != ''){
+            update_post_meta( $post_id, 'REAL_HOMES_property_price',$my_fieldvalue[0]);
+        }else if(isset($_REQUEST['REAL_HOMES_property_size']) && $my_fieldvalue[1] != ''){
+
+        }else{
+            update_post_meta( $post_id, 'REAL_HOMES_property_price', '0');
+        }
+    }
+    
+    return $my_fieldvalue;
+}

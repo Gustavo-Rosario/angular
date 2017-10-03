@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Language" content="pt-br">
+    <script src="//code.angularjs.org/snapshot/angular.min.js"></script>
+    <script type="text/javascript" src="lib/components.js"></script>
+    <script type="text/javascript" src="lib/front.js"></script>
+    <link rel="stylesheet" href="style/app.css" type="text/css" />
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body ng-app="listApp">
+    
+    <main ng-controller="FrontCtrl">
+        <h1>List for this week : {{list.length}} </h1>
+        <ul class="unstyled">
+            <li ng-repeat="l in list">
+                <input type="checkbox" ng-model="l.done"/>
+                <span class="done-{{l.done}}">{{l.text}}</span>
+            </li>
+        </ul>
+        
+        <form name="formTask" class="formHorizontal" novalidate>
+            <div class="form-group" ng-class="{ 'has-error' : formTask.newTask.$invalid && !userForm.newTask.$pristine}">
+                <input class="form-control" type="text" placeholder="Enter a new task" ng-model="newTask" name="newTask" ng-model-instant required/>
+                <p ng-show="formTask.newTask.$invalid && !userForm.newTask.$pristine" class="help-block">A task is required.</p>
+            </div>
+            <button ng-click="addTask()" class="btn btn-default btn-sm" ng-disable="formTask.$invalid"> <i class="glyphicon glyphicon-plus">ADD</i> </button>
+        </form>
+        
+        <button ng-click="rmDone()" class="btn btn-default btn-lg"><i class="glyphicon glyphicon-trash"></i> Remove Done Tasks</button>
+        
+        <tabs>
+            <pane title="Localization">
+                <span>Date: {{ date | date:'fullDate' }}</span><br>
+                <span>Currency: {{ 123456 | currency }}</span><br>
+                <span>Number: {{ 98765.4321 | number }}</span><br>
+            </pane>
+            <pane title="Pluralization">
+                <div ng-controller="FrontCtrl">
+                  <div ng-repeat="beerCount in beers">
+                    <ng-pluralize count="beerCount" when="beerForms"></ng-pluralize>
+                  </div>
+                </div>
+            </pane>
+            <pane title="Just a test">
+                <h3>Description</h3>
+                <p>
+                    helooo
+                </p>
+            </pane>
+        </tabs>
+    
+    </main>
+
+</body>
+</html>

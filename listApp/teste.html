@@ -1,0 +1,57 @@
+<html>
+<head>
+<style>
+
+.container {
+  width: 200px;
+  height: 200px;
+  margin: 100px;
+  position: relative;
+  display: inline-block;
+  -webkit-perspective-origin: 250% 250%;
+  perspective-origin: 150% 150%;
+}
+
+.container-3 {
+  -webkit-perspective: 1800px;
+  perspective: 1800px;
+}
+
+.cube {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -webkit-transform: translateZ(-100px);
+  transform: translateZ(-100px);
+}
+
+.cube div {
+  width: 196px;
+  height: 196px;
+  display: block;
+  position: absolute;
+  border: 2px solid black;
+  text-align: center;
+  color: white;
+  font-size: 25px;
+  line-height: 196px;
+  opacity: .9;
+}
+
+.cube .top {
+  background-color: yellow;
+   -webkit-transform: skew(-20deg);
+}
+
+</style>
+</head>
+<body>
+    <section class="container container-3">
+  <div class="cube">
+    <div class="top">5</div>
+  </div>
+</section>
+</body>
+</html>
